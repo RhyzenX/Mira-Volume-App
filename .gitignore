@@ -1,0 +1,30 @@
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+.kotlin
+
+# Local editor settings
+.idea/
+.vscode/
+
+# Generated Gradle state
+.gradle/
+.kotlin/
+
+# Trashed Android Studio resources
+app/.trashed-*
+
+# Android shared-storage trash copies
+.trashed-*

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="moe.shizuku.manager.permission.API_V23" />
+    <!-- Needed to enumerate every installed app (not just launchable ones) so any app that
+         plays audio can be given the mixing toggle. This makes the build off-Play only. -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
+    <!-- Lets us change ring/notification volume even when Do Not Disturb is active. -->
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+    <!-- Draw the custom volume panel over other apps (user grants at runtime). -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <!-- Short haptic tick when the user selects the vibrate ringer mode. -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- The media booster attaches a LoudnessEnhancer to the audio output. Normal-level, so it is
+         granted at install — but it is NOT sufficient for an effect on the global output mix, which
+         needs the signature-level MODIFY_AUDIO_ROUTING and therefore the privileged service. -->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <!-- The screen eyedropper reads a single frame of the display through MediaProjection, which
+         the platform only allows from a foreground service of the matching type. The notification
+         that service posts is also the user's control surface while they browse for a colour. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <application
+        android:name=".VolumeApp"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Volume">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.Volume"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <provider
+            android:name="rikka.shizuku.ShizukuProvider"
+            android:authorities="${applicationId}.shizuku"
+            android:multiprocess="false"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.INTERACT_ACROSS_USERS_FULL"
+            tools:ignore="ExportedContentProvider" />
+
+        <!-- Collapses the notification shade before the eyedropper grabs its frame. A notification
+             action that starts a service leaves the shade wide open, so the capture would be of the
+             shade rather than of whatever the user was actually looking at; starting an activity is
+             what closes it. This one shows nothing and finishes immediately. -->
+        <activity
+            android:name=".ui.PickTrampolineActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:taskAffinity=""
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <!-- Same trick, for the Quick Settings tile: the panel is an overlay window and the system
+             draws those below the shade, so it has to be raised from an activity, which is what
+             closes the shade. Invisible and finishes immediately, like the one above. -->
+        <activity
+            android:name=".ui.PanelTrampolineActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:taskAffinity=""
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <service
+            android:name=".service.ColorPickService"
+            android:exported="false"
+            android:foregroundServiceType="mediaProjection" />
+
+        <!-- Opens the Volume++ panel from Quick Settings, for a phone whose volume buttons no longer
+             work. Needs only draw-over-other-apps: nothing here touches the hardware keys, so the
+             accessibility service below is not a prerequisite. The label is what the OS lists in the
+             tile picker, so it is a platform resource (see res/values/strings.xml). -->
+        <service
+            android:name=".service.VolumePanelTileService"
+            android:exported="true"
+            android:icon="@drawable/ic_nav_volume"
+            android:label="@string/qs_tile_label"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
+        <!-- Note: .service.RootUserService is deliberately NOT declared here. libsu's RootService
+             is a ContextWrapper that only imitates a Service — the framework never instantiates it,
+             libsu does, in a root process it spawns itself. Declaring it makes the build fail
+             ("must extend android.app.Service"). It is kept from R8 by proguard-rules.pro instead,
+             since libsu resolves it reflectively by name. -->
+
+        <service
+            android:name=".service.VolumeKeyService"
+            android:exported="false"
+            android:label="@string/volume_key_service_label"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/volume_key_service" />
+        </service>
+    </application>
+
+</manifest>
