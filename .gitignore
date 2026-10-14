@@ -1,30 +1,32 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+# Local machine configuration
 local.properties
-.kotlin
-
-# Local editor settings
+*.iml
 .idea/
 .vscode/
+.DS_Store
 
-# Generated Gradle state
+# Gradle and Kotlin build state
 .gradle/
 .kotlin/
+build/
+**/build/
 
-# Trashed Android Studio resources
-app/.trashed-*
+# Native build outputs
+.externalNativeBuild/
+.cxx/
 
-# Android shared-storage trash copies
+# Generated Android artifacts
+*.apk
+*.aab
+
+# Temporary backups and Android trash
+*.bak
+*.bak_*
 .trashed-*
+**/.trashed-*
+
+# Captures
+captures/
+
+# Temporary namespace migration backups
+.namespace-migration-rollback/

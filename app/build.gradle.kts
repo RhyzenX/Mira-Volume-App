@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.volume_plus_plus.app"
+    namespace = "com.mira.volume"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -16,8 +16,8 @@ android {
         minSdk = 24
         targetSdk = 36
         // The app's one version. Bump it here; app code reads it back through AppConfig.
-        versionCode = 6
-        versionName = "2.1"
+        versionCode = 1
+        versionName = "1.0.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 

@@ -24,5 +24,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Volume++"
+rootProject.name = "Mira Volume"
 include(":app")

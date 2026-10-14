@@ -1,4 +1,4 @@
-# Translating Volume++
+# Translating Mira Volume
 
 Every user-facing string in the app lives in one place:
 
@@ -32,7 +32,7 @@ Copy `StringsEs.kt` to `StringsDe.kt` (using German as the example), rename the 
 the text:
 
 ```kotlin
-package com.volume_plus_plus.app.i18n
+package com.mira.volume.i18n
 
 /** Deutsch — German. */
 object GermanStrings : Strings() {
@@ -91,7 +91,7 @@ Read strings with `strings()` inside a `@Composable`, and with `Localization.str
 
 ## Conventions
 
-- **Don't translate product names**: `Volume++`, `Shizuku`, `Android`, and Android version numbers
+- **Don't translate product names**: `Mira Volume`, `Volume++`, `Shizuku`, `Android`, and Android version numbers
   ("Android 15") stay as they are, including inside a translated sentence.
 - **The volume panel imitates Android's own.** For the `panel*` and `output*` keys — `Sound &
   vibration`, `Media volume`, `Audio will play on`, `This phone` — the best reference is what your
